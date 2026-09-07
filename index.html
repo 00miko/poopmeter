@@ -361,6 +361,10 @@
 
   </div>
 
+  <section class="panel">
+  <h2>🏆 TOP 5 MIESIĄCA</h2>
+  <div id="monthlyLeaderboard"></div>
+</section>
 
   <div class="title">
     💎 Najdroższe posiedzenia
@@ -488,6 +492,86 @@ const nicknameDisplay =
 const changeNickBtn =
   document.getElementById("changeNick");
 
+const monthlyLeaderboardEl =
+  document.getElementById("monthlyLeaderboard");
+
+function renderMonthlyLeaderboard() {
+  const now = new Date();
+
+  const currentMonth = now.getMonth();
+  const currentYear = now.getFullYear();
+
+  const monthlySessions = allSessions.filter(session => {
+    if (!session.createdAt) return false;
+
+    const date = session.createdAt.toDate();
+
+    return (
+      date.getMonth() === currentMonth &&
+      date.getFullYear() === currentYear
+    );
+  });
+
+  const players = {};
+
+  monthlySessions.forEach(session => {
+    const userId = session.userId;
+
+    if (!players[userId]) {
+      players[userId] = {
+        nickname: session.nickname,
+        earned: 0,
+        duration: 0,
+        sessions: 0
+      };
+    }
+
+    players[userId].nickname = session.nickname;
+    players[userId].earned += session.earned;
+    players[userId].duration += session.duration;
+    players[userId].sessions++;
+  });
+
+  const ranking = Object.entries(players)
+    .sort((a, b) => b[1].earned - a[1].earned)
+    .slice(0, 5);
+
+  if (ranking.length === 0) {
+    monthlyLeaderboardEl.innerHTML =
+      `<div class="empty">Brak wyników w tym miesiącu.</div>`;
+    return;
+  }
+
+  monthlyLeaderboardEl.innerHTML = ranking
+    .map(([userId, player], index) => {
+
+      const isMe =
+        currentUser &&
+        userId === currentUser.uid;
+
+      return `
+        <div class="score-row ${isMe ? "me" : ""}">
+          <div>
+            <strong>
+              ${index + 1}. ${escapeHtml(player.nickname)}
+              ${isMe ? " • TY" : ""}
+            </strong>
+
+            <div class="score-details">
+              ${player.sessions}
+              ${player.sessions === 1 ? "posiedzenie" : "posiedzeń"}
+              • ${formatDuration(player.duration)}
+            </div>
+          </div>
+
+          <strong>
+            ${formatMoney(player.earned)}
+          </strong>
+        </div>
+      `;
+    })
+    .join("");
+}
 
 /* =========================
    ZMIENNE
@@ -799,6 +883,7 @@ function listenForSessions() {
 
 
       renderScoreboard();
+      renderMonthlyLeaderboard();
       renderBestSessions();
 
     },
