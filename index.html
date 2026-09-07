@@ -335,14 +335,6 @@
       0,00 zł
     </div>
 
-    <div id="timer">
-      00:00
-    </div>
-
-    <div class="rate">
-      34,00 zł / godz.
-    </div>
-
     <button id="startBtn" disabled>
       🚽 START SRANIA
     </button>
@@ -474,9 +466,6 @@ const ACTIVE_SESSION_STORAGE =
 
 const moneyEl =
   document.getElementById("money");
-
-const timerEl =
-  document.getElementById("timer");
 
 const startBtn =
   document.getElementById("startBtn");
@@ -1129,10 +1118,6 @@ function updateCounter() {
     formatMoney(earned);
 
 
-  timerEl.textContent =
-    formatTimer(elapsed);
-
-
   frame =
     requestAnimationFrame(
       updateCounter
@@ -1170,10 +1155,6 @@ function startSession() {
 
   moneyEl.textContent =
     "0,00 zł";
-
-
-  timerEl.textContent =
-    "00:00";
 
 
   statusEl.textContent =
@@ -1314,10 +1295,6 @@ async function stopSession() {
 
   moneyEl.textContent =
     formatMoney(earned);
-
-
-  timerEl.textContent =
-    formatTimer(elapsed);
 
 
   statusEl.textContent =
