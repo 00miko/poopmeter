@@ -1,0 +1,1490 @@
+```html
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+  >
+
+  <meta name="theme-color" content="#111111">
+
+  <title>Kupometr 💩</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, Helvetica, sans-serif;
+      background:
+        radial-gradient(circle at top, #2d2d2d 0%, #111 42%, #050505 100%);
+      color: white;
+      padding: 25px 18px 50px;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 440px;
+      margin: auto;
+    }
+
+    .center {
+      text-align: center;
+    }
+
+    .logo {
+      font-size: 55px;
+    }
+
+    h1 {
+      margin: 5px 0 0;
+      font-size: 34px;
+    }
+
+    .subtitle {
+      color: #999;
+      font-size: 14px;
+      margin-top: 7px;
+    }
+
+    .user-bar {
+      margin-top: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 13px;
+      color: #aaa;
+    }
+
+    #nicknameDisplay {
+      color: white;
+      font-weight: bold;
+    }
+
+    .small-button {
+      background: #292929;
+      color: #bbb;
+      border: 1px solid #444;
+      border-radius: 8px;
+      padding: 5px 8px;
+      font-size: 11px;
+      cursor: pointer;
+    }
+
+    .card {
+      margin-top: 25px;
+      padding: 28px 20px;
+      border-radius: 24px;
+      background: rgba(255,255,255,.065);
+      border: 1px solid rgba(255,255,255,.11);
+      box-shadow: 0 20px 50px rgba(0,0,0,.35);
+      text-align: center;
+    }
+
+    .status {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 1.6px;
+      color: #777;
+      margin-bottom: 15px;
+    }
+
+    .status.active {
+      color: #65e989;
+    }
+
+    .label {
+      font-size: 12px;
+      letter-spacing: 1.4px;
+      text-transform: uppercase;
+      color: #999;
+    }
+
+    #money {
+      font-size: clamp(52px, 15vw, 76px);
+      line-height: 1;
+      font-weight: 900;
+      margin: 14px 0;
+      font-variant-numeric: tabular-nums;
+    }
+
+    #timer {
+      color: #999;
+      font-size: 15px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .rate {
+      margin-top: 8px;
+      color: #666;
+      font-size: 11px;
+    }
+
+    #startBtn {
+      width: 100%;
+      border: 0;
+      border-radius: 17px;
+      padding: 20px;
+      margin-top: 24px;
+      background: #ffd400;
+      color: #111;
+      font-size: 20px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    #startBtn:active {
+      transform: scale(.98);
+    }
+
+    #startBtn.running {
+      background: #ff4646;
+      color: white;
+    }
+
+    #startBtn:disabled {
+      opacity: .5;
+    }
+
+    #summary {
+      display: none;
+      margin-top: 20px;
+      padding: 18px;
+      background: rgba(255,255,255,.055);
+      border-radius: 15px;
+      line-height: 1.55;
+    }
+
+    .summary-money {
+      color: #ffd400;
+      font-size: 30px;
+      font-weight: 900;
+      margin: 8px 0;
+    }
+
+    .title {
+      margin-top: 30px;
+      margin-bottom: 12px;
+      font-size: 18px;
+      font-weight: 900;
+    }
+
+    .scoreboard {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .score {
+      display: grid;
+      grid-template-columns: 38px minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 10px;
+      background: rgba(255,255,255,.055);
+      border: 1px solid rgba(255,255,255,.07);
+      border-radius: 15px;
+      padding: 14px;
+    }
+
+    .place {
+      font-size: 19px;
+      text-align: center;
+    }
+
+    .player {
+      min-width: 0;
+    }
+
+    .player-name {
+      font-size: 15px;
+      font-weight: 800;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .player-info {
+      margin-top: 3px;
+      color: #777;
+      font-size: 11px;
+    }
+
+    .player-money {
+      color: #ffd400;
+      font-weight: 900;
+      font-size: 16px;
+      white-space: nowrap;
+    }
+
+    .you {
+      border-color: rgba(255,212,0,.45);
+      background: rgba(255,212,0,.07);
+    }
+
+    .live {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 12px;
+      color: #777;
+      font-size: 11px;
+    }
+
+    .live-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #50db77;
+      box-shadow: 0 0 7px #50db77;
+    }
+
+    .best-list {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .best {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 14px;
+      border-radius: 13px;
+      background: rgba(255,255,255,.045);
+      font-size: 13px;
+    }
+
+    .best-name {
+      font-weight: bold;
+    }
+
+    .best-value {
+      color: #ffd400;
+      font-weight: bold;
+    }
+
+    .loading {
+      text-align: center;
+      color: #666;
+      padding: 20px;
+      font-size: 13px;
+    }
+
+    .error {
+      color: #ff7777;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 32px;
+      font-size: 10px;
+      line-height: 1.5;
+      color: #444;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="app">
+
+  <div class="center">
+
+    <div class="logo">💩</div>
+
+    <h1>KUPOMETR</h1>
+
+    <div class="subtitle">
+      Każda minuta ma swoją wartość.
+    </div>
+
+    <div class="user-bar">
+
+      Grasz jako:
+
+      <span id="nicknameDisplay">...</span>
+
+      <button id="changeNick" class="small-button">
+        zmień
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <div class="card">
+
+    <div id="status" class="status">
+      ŁĄCZENIE...
+    </div>
+
+    <div class="label">
+      Zarobione podczas srania
+    </div>
+
+    <div id="money">
+      0,00 zł
+    </div>
+
+    <div id="timer">
+      00:00
+    </div>
+
+    <div class="rate">
+      34,00 zł / godz.
+    </div>
+
+    <button id="startBtn" disabled>
+      🚽 START SRANIA
+    </button>
+
+    <div id="summary"></div>
+
+  </div>
+
+
+  <div class="title">
+    🏆 Globalny scoreboard
+  </div>
+
+  <div class="live">
+    <div class="live-dot"></div>
+    AKTUALIZOWANY NA ŻYWO
+  </div>
+
+  <div id="scoreboard" class="scoreboard">
+
+    <div class="loading">
+      Pobieranie wyników...
+    </div>
+
+  </div>
+
+
+  <div class="title">
+    💎 Najdroższe posiedzenia
+  </div>
+
+  <div id="bestSessions" class="best-list">
+
+    <div class="loading">
+      Pobieranie...
+    </div>
+
+  </div>
+
+
+  <div class="footer">
+    Dane rankingu są wspólne dla wszystkich użytkowników aplikacji.
+  </div>
+
+</div>
+
+
+<script type="module">
+
+/* =========================
+   FIREBASE
+========================= */
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
+
+import {
+  getAuth,
+  signInAnonymously,
+  onAuthStateChanged
+}
+from "https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js";
+
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  serverTimestamp,
+  onSnapshot
+}
+from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
+
+
+const firebaseConfig = {
+
+  apiKey:
+    "AIzaSyCVVqexopmwhZ9jH76l4iI7v0qqTHm-BM8",
+
+  authDomain:
+    "poopmeter420.firebaseapp.com",
+
+  projectId:
+    "poopmeter420",
+
+  storageBucket:
+    "poopmeter420.firebasestorage.app",
+
+  messagingSenderId:
+    "379220247897",
+
+  appId:
+    "1:379220247897:web:0358e4d16d71595e243848",
+
+  measurementId:
+    "G-MP74D4MTQH"
+
+};
+
+
+const app =
+  initializeApp(firebaseConfig);
+
+const auth =
+  getAuth(app);
+
+const db =
+  getFirestore(app);
+
+
+/* =========================
+   CONFIG
+========================= */
+
+const HOURLY_RATE = 34;
+
+const RATE_PER_MS =
+  HOURLY_RATE / 3600000;
+
+const NICK_STORAGE =
+  "kupometr_nickname";
+
+const ACTIVE_SESSION_STORAGE =
+  "kupometr_active_session";
+
+
+/* =========================
+   ELEMENTY
+========================= */
+
+const moneyEl =
+  document.getElementById("money");
+
+const timerEl =
+  document.getElementById("timer");
+
+const startBtn =
+  document.getElementById("startBtn");
+
+const statusEl =
+  document.getElementById("status");
+
+const summaryEl =
+  document.getElementById("summary");
+
+const scoreboardEl =
+  document.getElementById("scoreboard");
+
+const bestSessionsEl =
+  document.getElementById("bestSessions");
+
+const nicknameDisplay =
+  document.getElementById("nicknameDisplay");
+
+const changeNickBtn =
+  document.getElementById("changeNick");
+
+
+/* =========================
+   ZMIENNE
+========================= */
+
+let currentUser = null;
+let nickname = "";
+let running = false;
+let startTime = 0;
+let frame = null;
+let allSessions = [];
+let listeningStarted = false;
+
+
+/* =========================
+   FORMATOWANIE
+========================= */
+
+function formatMoney(value) {
+
+  return Number(value).toLocaleString(
+    "pl-PL",
+    {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }
+  ) + " zł";
+
+}
+
+
+function formatTimer(ms) {
+
+  const totalSeconds =
+    Math.floor(ms / 1000);
+
+  const hours =
+    Math.floor(totalSeconds / 3600);
+
+  const minutes =
+    Math.floor(
+      (totalSeconds % 3600) / 60
+    );
+
+  const seconds =
+    totalSeconds % 60;
+
+
+  if (hours > 0) {
+
+    return (
+      String(hours).padStart(2, "0")
+      + ":"
+      + String(minutes).padStart(2, "0")
+      + ":"
+      + String(seconds).padStart(2, "0")
+    );
+
+  }
+
+
+  return (
+    String(minutes).padStart(2, "0")
+    + ":"
+    + String(seconds).padStart(2, "0")
+  );
+
+}
+
+
+function formatDuration(ms) {
+
+  const seconds =
+    Math.floor(ms / 1000);
+
+  const h =
+    Math.floor(seconds / 3600);
+
+  const m =
+    Math.floor(
+      (seconds % 3600) / 60
+    );
+
+  const s =
+    seconds % 60;
+
+
+  if (h > 0) {
+    return `${h} godz. ${m} min ${s} sek.`;
+  }
+
+  if (m > 0) {
+    return `${m} min ${s} sek.`;
+  }
+
+  return `${s} sek.`;
+
+}
+
+
+/* =========================
+   NICK
+========================= */
+
+function askForNickname() {
+
+  let saved =
+    localStorage.getItem(
+      NICK_STORAGE
+    );
+
+
+  if (saved) {
+
+    nickname = saved;
+
+  } else {
+
+    let chosen =
+      prompt(
+        "Podaj swój nick do rankingu:"
+      );
+
+
+    if (!chosen) {
+      chosen = "Anonimowy Srajtek";
+    }
+
+
+    nickname =
+      chosen.trim().slice(0, 20);
+
+
+    if (!nickname) {
+      nickname = "Anonimowy Srajtek";
+    }
+
+
+    localStorage.setItem(
+      NICK_STORAGE,
+      nickname
+    );
+
+  }
+
+
+  nicknameDisplay.textContent =
+    nickname;
+
+}
+
+
+changeNickBtn.addEventListener(
+  "click",
+  () => {
+
+    if (running) {
+      alert(
+        "Nie możesz zmienić nicku podczas aktywnego posiedzenia."
+      );
+      return;
+    }
+
+
+    const chosen =
+      prompt(
+        "Nowy nick:",
+        nickname
+      );
+
+
+    if (!chosen) return;
+
+
+    const clean =
+      chosen.trim().slice(0, 20);
+
+
+    if (!clean) return;
+
+
+    nickname = clean;
+
+
+    localStorage.setItem(
+      NICK_STORAGE,
+      nickname
+    );
+
+
+    nicknameDisplay.textContent =
+      nickname;
+
+  }
+);
+
+
+/* =========================
+   AUTH
+========================= */
+
+askForNickname();
+
+
+onAuthStateChanged(
+  auth,
+  async user => {
+
+    if (user) {
+
+      currentUser = user;
+
+      startBtn.disabled = false;
+
+
+      if (!listeningStarted) {
+
+        listeningStarted = true;
+        listenForSessions();
+
+      }
+
+
+      restoreActiveSession();
+
+    }
+
+    else {
+
+      try {
+
+        await signInAnonymously(auth);
+
+      }
+
+      catch (error) {
+
+        console.error(error);
+
+        statusEl.textContent =
+          "BŁĄD POŁĄCZENIA";
+
+        statusEl.classList.add(
+          "error"
+        );
+
+      }
+
+    }
+
+  }
+);
+
+
+/* =========================
+   REALTIME
+========================= */
+
+function listenForSessions() {
+
+  const sessionsRef =
+    collection(
+      db,
+      "sessions"
+    );
+
+
+  onSnapshot(
+
+    sessionsRef,
+
+    snapshot => {
+
+      allSessions = [];
+
+
+      snapshot.forEach(
+        document => {
+
+          const data =
+            document.data();
+
+
+          allSessions.push({
+
+            id:
+              document.id,
+
+            userId:
+              data.userId,
+
+            nickname:
+              data.nickname,
+
+            duration:
+              Number(data.duration),
+
+            earned:
+              Number(data.earned),
+
+            createdAt:
+              data.createdAt?.toDate?.()
+              || new Date()
+
+          });
+
+        }
+      );
+
+
+      renderScoreboard();
+      renderBestSessions();
+
+    },
+
+    error => {
+
+      console.error(error);
+
+      scoreboardEl.innerHTML =
+        `
+        <div class="loading error">
+          Nie udało się pobrać rankingu.
+        </div>
+        `;
+
+    }
+
+  );
+
+}
+
+
+/* =========================
+   SCOREBOARD
+========================= */
+
+function renderScoreboard() {
+
+  const players =
+    new Map();
+
+
+  for (const session of allSessions) {
+
+    if (!players.has(session.userId)) {
+
+      players.set(
+        session.userId,
+        {
+          userId: session.userId,
+          nickname: session.nickname,
+          total: 0,
+          sessions: 0,
+          best: 0,
+          latestDate: session.createdAt
+        }
+      );
+
+    }
+
+
+    const player =
+      players.get(session.userId);
+
+
+    player.total +=
+      session.earned;
+
+    player.sessions++;
+
+    player.best =
+      Math.max(
+        player.best,
+        session.earned
+      );
+
+
+    if (
+      session.createdAt
+      >= player.latestDate
+    ) {
+
+      player.nickname =
+        session.nickname;
+
+      player.latestDate =
+        session.createdAt;
+
+    }
+
+  }
+
+
+  const ranking =
+    [...players.values()]
+      .sort(
+        (a, b) =>
+          b.total - a.total
+      );
+
+
+  if (ranking.length === 0) {
+
+    scoreboardEl.innerHTML =
+      `
+      <div class="loading">
+        Jeszcze nikt nie zarobił
+        na posiedzeniu. 💩
+      </div>
+      `;
+
+    return;
+
+  }
+
+
+  scoreboardEl.innerHTML = "";
+
+
+  ranking.forEach(
+    (player, index) => {
+
+      const row =
+        document.createElement("div");
+
+
+      row.className = "score";
+
+
+      if (
+        currentUser
+        &&
+        player.userId
+        === currentUser.uid
+      ) {
+
+        row.classList.add("you");
+
+      }
+
+
+      let place =
+        `${index + 1}.`;
+
+      if (index === 0)
+        place = "🥇";
+
+      if (index === 1)
+        place = "🥈";
+
+      if (index === 2)
+        place = "🥉";
+
+
+      row.innerHTML =
+        `
+
+        <div class="place">
+          ${place}
+        </div>
+
+        <div class="player">
+
+          <div class="player-name">
+
+            ${escapeHtml(player.nickname)}
+
+            ${
+              currentUser
+              &&
+              player.userId
+              === currentUser.uid
+              ? " • TY"
+              : ""
+            }
+
+          </div>
+
+          <div class="player-info">
+
+            ${player.sessions}
+            posiedzeń
+
+            •
+
+            rekord
+            ${formatMoney(player.best)}
+
+          </div>
+
+        </div>
+
+        <div class="player-money">
+          ${formatMoney(player.total)}
+        </div>
+
+        `;
+
+
+      scoreboardEl.appendChild(
+        row
+      );
+
+    }
+  );
+
+}
+
+
+/* =========================
+   NAJDROŻSZE SESJE
+========================= */
+
+function renderBestSessions() {
+
+  if (allSessions.length === 0) {
+
+    bestSessionsEl.innerHTML =
+      `
+      <div class="loading">
+        Brak posiedzeń.
+      </div>
+      `;
+
+    return;
+
+  }
+
+
+  const best =
+    [...allSessions]
+      .sort(
+        (a, b) =>
+          b.earned - a.earned
+      )
+      .slice(0, 10);
+
+
+  bestSessionsEl.innerHTML = "";
+
+
+  best.forEach(
+    (session, index) => {
+
+      const row =
+        document.createElement("div");
+
+
+      row.className = "best";
+
+
+      let place =
+        `${index + 1}.`;
+
+      if (index === 0)
+        place = "🥇";
+
+      if (index === 1)
+        place = "🥈";
+
+      if (index === 2)
+        place = "🥉";
+
+
+      row.innerHTML =
+        `
+
+        <div>
+
+          <span class="best-name">
+
+            ${place}
+            ${escapeHtml(session.nickname)}
+
+          </span>
+
+          <br>
+
+          <span
+            style="
+              color:#777;
+              font-size:11px;
+            "
+          >
+
+            ${formatDuration(session.duration)}
+
+          </span>
+
+        </div>
+
+        <div class="best-value">
+          ${formatMoney(session.earned)}
+        </div>
+
+        `;
+
+
+      bestSessionsEl.appendChild(
+        row
+      );
+
+    }
+  );
+
+}
+
+
+/* =========================
+   TIMER
+========================= */
+
+function updateCounter() {
+
+  if (!running) return;
+
+
+  const elapsed =
+    Date.now() - startTime;
+
+
+  const earned =
+    elapsed * RATE_PER_MS;
+
+
+  moneyEl.textContent =
+    formatMoney(earned);
+
+
+  timerEl.textContent =
+    formatTimer(elapsed);
+
+
+  frame =
+    requestAnimationFrame(
+      updateCounter
+    );
+
+}
+
+
+/* =========================
+   START
+========================= */
+
+function startSession() {
+
+  if (!currentUser) return;
+
+
+  running = true;
+
+  startTime =
+    Date.now();
+
+
+  localStorage.setItem(
+    ACTIVE_SESSION_STORAGE,
+    JSON.stringify({
+      startTime: startTime
+    })
+  );
+
+
+  summaryEl.style.display =
+    "none";
+
+
+  moneyEl.textContent =
+    "0,00 zł";
+
+
+  timerEl.textContent =
+    "00:00";
+
+
+  statusEl.textContent =
+    "● AKTYWNA SESJA SRANIA";
+
+
+  statusEl.classList.add(
+    "active"
+  );
+
+
+  startBtn.textContent =
+    "🧻 KONIEC SRANIA";
+
+
+  startBtn.classList.add(
+    "running"
+  );
+
+
+  updateCounter();
+
+}
+
+
+/* =========================
+   PRZYWRÓCENIE SESJI
+========================= */
+
+function restoreActiveSession() {
+
+  if (running) return;
+
+
+  const saved =
+    localStorage.getItem(
+      ACTIVE_SESSION_STORAGE
+    );
+
+
+  if (!saved) {
+
+    statusEl.textContent =
+      "GOTOWY DO POSIEDZENIA";
+
+    return;
+
+  }
+
+
+  try {
+
+    const data =
+      JSON.parse(saved);
+
+
+    if (
+      !data.startTime
+      ||
+      Date.now() - data.startTime
+      > 14400000
+    ) {
+
+      localStorage.removeItem(
+        ACTIVE_SESSION_STORAGE
+      );
+
+      statusEl.textContent =
+        "GOTOWY DO POSIEDZENIA";
+
+      return;
+
+    }
+
+
+    startTime =
+      Number(data.startTime);
+
+
+    running = true;
+
+
+    statusEl.textContent =
+      "● AKTYWNA SESJA SRANIA";
+
+
+    statusEl.classList.add(
+      "active"
+    );
+
+
+    startBtn.textContent =
+      "🧻 KONIEC SRANIA";
+
+
+    startBtn.classList.add(
+      "running"
+    );
+
+
+    updateCounter();
+
+  }
+
+  catch {
+
+    localStorage.removeItem(
+      ACTIVE_SESSION_STORAGE
+    );
+
+    statusEl.textContent =
+      "GOTOWY DO POSIEDZENIA";
+
+  }
+
+}
+
+
+/* =========================
+   STOP
+========================= */
+
+async function stopSession() {
+
+  running = false;
+
+
+  cancelAnimationFrame(frame);
+
+
+  const elapsed =
+    Date.now() - startTime;
+
+
+  const earned =
+    elapsed * RATE_PER_MS;
+
+
+  moneyEl.textContent =
+    formatMoney(earned);
+
+
+  timerEl.textContent =
+    formatTimer(elapsed);
+
+
+  statusEl.textContent =
+    "ZAPISYWANIE WYNIKU...";
+
+
+  statusEl.classList.remove(
+    "active"
+  );
+
+
+  startBtn.disabled = true;
+
+
+  try {
+
+    await addDoc(
+
+      collection(
+        db,
+        "sessions"
+      ),
+
+      {
+
+        userId:
+          currentUser.uid,
+
+        nickname:
+          nickname,
+
+        duration:
+          elapsed,
+
+        earned:
+          earned,
+
+        createdAt:
+          serverTimestamp()
+
+      }
+
+    );
+
+
+    localStorage.removeItem(
+      ACTIVE_SESSION_STORAGE
+    );
+
+
+    summaryEl.innerHTML =
+      `
+
+      💩
+      <strong>
+        MISJA ZAKOŃCZONA
+      </strong>
+
+      <div class="summary-money">
+        ${formatMoney(earned)}
+      </div>
+
+      Czas operacji:
+
+      <strong>
+        ${formatDuration(elapsed)}
+      </strong>
+
+      <br><br>
+
+      Wynik dodany do
+      globalnego scoreboardu.
+
+      `;
+
+
+    summaryEl.style.display =
+      "block";
+
+
+    statusEl.textContent =
+      "WYNIK ZAPISANY ✓";
+
+  }
+
+  catch (error) {
+
+    console.error(error);
+
+
+    /*
+    Nie usuwamy aktywnej sesji,
+    jeśli zapis do Firebase się nie udał.
+    */
+
+
+    statusEl.textContent =
+      "BŁĄD ZAPISU";
+
+
+    summaryEl.innerHTML =
+      `
+      Nie udało się zapisać wyniku.
+      Sprawdź połączenie z internetem
+      i spróbuj ponownie.
+      `;
+
+
+    summaryEl.style.display =
+      "block";
+
+  }
+
+
+  startBtn.disabled = false;
+
+
+  startBtn.textContent =
+    "🚽 START SRANIA";
+
+
+  startBtn.classList.remove(
+    "running"
+  );
+
+}
+
+
+/* =========================
+   BUTTON
+========================= */
+
+startBtn.addEventListener(
+  "click",
+  () => {
+
+    if (running) {
+      stopSession();
+    }
+
+    else {
+      startSession();
+    }
+
+  }
+);
+
+
+/* =========================
+   ESCAPE HTML
+========================= */
+
+function escapeHtml(text) {
+
+  const div =
+    document.createElement("div");
+
+  div.textContent =
+    text;
+
+  return div.innerHTML;
+
+}
+
+</script>
+
+</body>
+</html>
+```
